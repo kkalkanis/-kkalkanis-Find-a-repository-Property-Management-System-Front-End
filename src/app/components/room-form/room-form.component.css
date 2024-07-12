@@ -1,0 +1,26 @@
+@media (min-width:200px) and ( max-width: 600px) {
+  .header {
+    /* force devises with a smaller width to observe this style */
+    min-width: 600px;
+    background-color: rgb(71, 71, 71);
+  }
+}
+
+
+table th {
+  vertical-align: top;
+  text-align: center;
+}
+
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+
+
+
+
+
+

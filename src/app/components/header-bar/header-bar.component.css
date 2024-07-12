@@ -1,0 +1,47 @@
+/*distance between header bar elements*/
+.navbar-nav > li {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+/*header links color*/
+  .navbar-nav > li > a {
+    color: #2a5192;
+    font-size:22px;
+  }
+/*distance between buttons*/
+.headerButtons {
+  margin-left: 20px;
+  width:160px;
+  height:40px;
+}
+
+/*This is modifying the btn-primary colors */
+.btn-primary {
+  color: white;
+  background-color: royalblue;
+  border-color: royalblue; /*set the color you want here*/
+}
+
+  .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    color: black;
+    background-color: yellow;
+    border-color: yellow; /*set the color you want here*/
+  }
+
+.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .open > .dropdown-toggle.btn-success {
+  color: black;
+  background-color: yellow;
+  border-color: yellow; /*set the color you want here*/
+}
+
+@media (max-width: 400px) {
+  .nav-bounds {
+    width: 34em;
+  }
+}
+
+
+
+
+

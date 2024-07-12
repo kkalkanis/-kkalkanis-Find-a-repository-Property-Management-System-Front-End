@@ -1,0 +1,204 @@
+<nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <div class="container-fluid">
+    <h1 style="color:white">Customer CRUD Functions</h1>
+    <form class="form-inline">
+      <input (input)="inputPressed($event)" id="searchText" style="width:300px" class="form-control mr-sm-2" type="search" placeholder="Search Customer" aria-label="Search">
+      <button (click)="searchButtonClicked()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+    <div class="d-flex">
+      <button (click)="clickAddCustomer()" type="button" data-bs-toggle="modal" data-bs-target="#customerModal" class="btn btn-success"> <i class="fa-solid fa-plus"></i> Add Customer</button>
+    </div>
+  </div>
+</nav>
+<select (click)="selectedOptionPressed()" id="orderSelection" class="mx-5 my-2" style="width:140px; height: 30px">
+  <ng-container>
+    <option>Ascending</option>
+    <option>Descending</option>
+  </ng-container>
+</select>
+<!--<table class="table mt-3">-->
+<table class="table mt-1 mx-5" tabindex="0" style="max-width:1700px">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Firstname</th>
+      <th scope="col">LastName</th>
+      <th scope="col">Passport</th>
+      <th scope="col">ContactPhone</th>
+      <th scope="col">Email</th>
+      <th scope="col">Country</th>
+      <th scope="col">City</th>
+      <th scope="col">Address</th>
+      <th scope="col">Zip Code</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let customer of customers">
+      <td>{{customer.customerId}}</td>
+      <td>{{customer.firstName}}</td>
+      <td>{{customer.lastName}}</td>
+      <td>{{customer.passport}}</td>
+      <td>{{customer.contactPhone}}</td>
+      <td>{{customer.email}}</td>
+      <td>{{customer.country}}</td>
+      <td>{{customer.city}}</td>
+      <td>{{customer.address}}</td>
+      <td>{{customer.zipCode}}</td>
+      <td>
+        <button (click)="editCustomer(customer)" type="button" data-bs-toggle="modal" data-bs-target="#customerModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit </button>
+        <button (click)="deleteCustomer(customer.customerId)" class="btn btn-danger mx-2"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLabel">Customer Details</h3>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!--Modal Body Start-->
+      <div class="modal-body">
+        <form [formGroup]="formValue">
+
+          <div class="form-group">
+            <span class="form-label">Firstname</span>
+            <input formControlName="firstName" class="form-control" type="text" placeholder="Enter Customer's First Name">
+            <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="firstName?.errors?.['required']">
+                Firstname is required
+              </div>
+              <div *ngIf="firstName?.errors?.['maxlength']">
+                Firstname must be up to 50 characters long
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <span class="form-label">Lastname</span>
+            <input formControlName="lastName" class="form-control" type="text" placeholder="Enter Customer's Last Name">
+            <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="lastName?.errors?.['required']">
+                Last Name is required
+              </div>
+              <div *ngIf="lastName?.errors?.['maxlength']">
+                Last Name must be up to 50 characters long
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">Passport</label>
+            <input formControlName="passport" class="form-control" type="text" placeholder="Enter Customer's Passport">
+            <div *ngIf="passport.invalid && (passport.dirty || passport.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="passport?.errors?.['required']">
+                Passport is required
+              </div>
+              <div *ngIf="passport?.errors?.['maxlength']">
+                Passport must be up to 10 characters long
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">Contact Phone</label>
+            <input formControlName="contactPhone" class="form-control" type="text" placeholder="Enter Customer's Contact Phone">
+            <div *ngIf="contactPhone.invalid && (contactPhone.dirty || contactPhone.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="contactPhone?.errors?.['required']">
+                Contact Phone is required
+              </div>
+              <div *ngIf="contactPhone?.errors?.['maxlength']">
+                Contact Phone must be up to 10 characters long
+              </div>
+              <div *ngIf="contactPhone?.errors?.['minlength']">
+                Contact Phone must be at least 10 digits long
+              </div>
+              <div *ngIf="contactPhone?.errors?.['pattern']">
+                Wrong Contact Phone format
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">Email</label>
+            <input formControlName="email" class="form-control" type="text" placeholder="Enter Customer's Email">
+            <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="email?.errors?.['required']">
+                Email is required
+              </div>
+              <div *ngIf="email?.errors?.['pattern']">
+                Wrong Email format
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">Country</label>
+            <input formControlName="country" class="form-control" type="text" placeholder="Enter Customer's Country">
+            <div *ngIf="country.invalid && (country.dirty || country.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="country?.errors?.['required']">
+                Country is required
+              </div>
+              <div *ngIf="country?.errors?.['maxlength']">
+                Country must be up to 50 characters long
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">City</label>
+            <input formControlName="city" class="form-control" type="text" placeholder="Enter Customer's City">
+            <div *ngIf="city.invalid && (city.dirty || city.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="city?.errors?.['required']">
+                City is required
+              </div>
+              <div *ngIf="city?.errors?.['maxlength']">
+                City must be up to 50 characters long
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">Address</label>
+            <input formControlName="address" class="form-control" type="text" placeholder="Enter Customer's Address">
+            <div *ngIf="address.invalid && (address.dirty || address.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="address?.errors?.['required']">
+                Address is required
+              </div>
+              <div *ngIf="address?.errors?.['maxlength']">
+                Address must be up to 50 characters long
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">Zip Code</label>
+            <input formControlName="zipCode" class="form-control" type="text" placeholder="Enter City's Zip Code">
+            <div *ngIf="zipCode.invalid && (zipCode.dirty || zipCode.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="zipCode?.errors?.['required']">
+                Zip Code is required
+              </div>
+              <div *ngIf="zipCode?.errors?.['maxlength']">
+                Zip Code must be up to 9 characters long
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!--Modal Body End-->
+      <div class="modal-footer">
+        <button type="button" id="close" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+        <button (click)="postCustomer()" *ngIf="showAdd" type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+        <button (click)="updateCustomer()" *ngIf="showUpdate" type="button"  class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+

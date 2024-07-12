@@ -1,0 +1,303 @@
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71);">
+  <h1 class="pl-1" style="color:white">Reservation CRUD Functions</h1>
+  <button (click)="clickAddReservation()" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-success mr-2"> <i class="fa-solid fa-plus"></i> Add Reservation</button>
+</nav>
+
+
+<div class="container-fluid">
+  <table class="table  mt-3" tabindex="0">
+    <thead>
+      <tr>
+        <th scope="col">Reservation Serial Number</th>
+        <th scope="col">Tour Operator Name</th>
+        <th scope="col">Reservation's Name</th>
+        <th scope="col">From</th>
+        <th scope="col">To</th>
+        <th scope="col">Reservation's Type Functions</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tempReservations of reservations">
+        <td>{{tempReservations.id}}</td>
+        <td>{{tempReservations.tourOperatorName}}</td>
+        <td>{{tempReservations.reservationName}}</td>
+        <td>{{tempReservations.checkInDate}}</td>
+        <td>{{tempReservations.checkOutDate}}</td>
+
+        <td>
+          <button (click)="clickAddReservationType(tempReservations.id)" type="button" data-bs-toggle="modal" data-bs-target="#reservationTypeModal" class="btn btn-warning"><i class="fa-solid fa-plus"></i> Add Reservation Type</button>
+          <button (click)="viewReservationTypes(tempReservations.id)" type="button" data-bs-toggle="modal" data-bs-target="#tableReservationTypeModal" class="btn btn-dark mx-2"><i class="fa-solid fa-eye"></i> View Reservation Types</button>
+        </td>
+
+        <td>
+          <button (click)="editReservation(tempReservations)" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit </button>
+          <button (click)="deleteReservation(tempReservations.id)" class="btn btn-danger mx-2"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Reservation Details</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Modal Body Start-->
+
+
+        <div class="modal-body">
+          <form [formGroup]="formValue">
+
+            <div class="form-group">
+              <span class="form-label">Tour Operator</span>
+              <input formControlName="tourOperator" class="form-control" type="text" placeholder="Enter Tour Operator's Name">
+              <div *ngIf="tourOperator.invalid && (tourOperator.dirty || tourOperator.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="tourOperator?.errors?.['required']">
+                  Tour Operator's Name is required
+                </div>
+                <div *ngIf="tourOperator?.errors?.['maxlength']">
+                  Tour Operator's Name must be up to 50 characters long
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Reservation's Name</span>
+              <input formControlName="reservationName" class="form-control" type="text" placeholder="Enter Reservation's Name">
+              <div *ngIf="reservationName.invalid && (reservationName.dirty || reservationName.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="reservationName?.errors?.['required']">
+                  Reservation's Name is required
+                </div>
+                <div *ngIf="reservationName?.errors?.['maxlength']">
+                  Reservation's Name must be up to 50 characters long
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Contact Phone</span>
+              <input formControlName="contactPhone" class="form-control" type="text" placeholder="Enter Customer's ContactPhone">
+              <div *ngIf="contactPhone.invalid && (contactPhone.dirty || contactPhone.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="contactPhone?.errors?.['required']">
+                  Contact Phone is required
+                </div>
+                <div *ngIf="contactPhone?.errors?.['maxlength']">
+                  Contact Phone must be up to 10 characters long
+                </div>
+                <div *ngIf="contactPhone?.errors?.['minlength']">
+                  Contact Phone must be at least 10 digits long
+                </div>
+                <div *ngIf="contactPhone?.errors?.['pattern']">
+                  Wrong Contact Phone format
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleInputType">From</label>
+              <input formControlName="checkIn" class="form-control" type="date">
+              <div *ngIf="checkIn.invalid && (checkIn.dirty || checkIn.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="checkIn?.errors?.['required']">
+                  Check In Date is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleInputType">To </label>
+              <input formControlName="checkOut" class="form-control" type="date">
+              <div *ngIf="checkOut.invalid && (checkOut.dirty || checkOut.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="checkOut?.errors?.['required']">
+                  Check Out Date is required
+                </div>
+              </div>
+            </div>
+
+
+          </form>
+        </div>
+
+        <!--Modal Body End-->
+        <div class="modal-footer">
+          <button type="button" id="close-1" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+
+          <button *ngIf="showAdd" type="button" (click)="postReservation()" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+          <button *ngIf="showUpdate" type="button" (click)="updateReservation()" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Second Modal for add reservation type begins here----------------------------------------------------->
+  <!-- Modal -->
+  <div class="modal fade" id="reservationTypeModal" tabindex="-1" role="dialog" aria-labelledby="reservationTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="reservationTypeModalLabel">Reservation Type Details</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Modal Body Start-->
+
+
+        <div class="modal-body">
+          <form [formGroup]="formValue2">
+
+            <div class="form-group">
+              <span class="form-label">Room Type</span>
+              <div *ngIf="roomType.invalid && (roomType.dirty || roomType.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="roomType?.errors?.['required']">
+                  Room Type is required
+                </div>
+              </div>
+              <select formControlName="roomType" [(ngModel)]="selectedType" (change)="selectChangeHandler($event)" class="form-control">
+                <ng-container *ngFor="let types of roomTypes">
+                  <option value={{types.type}}>{{types.type}}</option>
+                </ng-container>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Number Of Rooms</span>
+              <input formControlName="numberOfRooms" class="form-control" type="number" placeholder="Enter Number Of Rooms">
+              <div *ngIf="numberOfRooms.invalid && (numberOfRooms.dirty || numberOfRooms.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="numberOfRooms?.errors?.['required']">
+                  Number Of Rooms is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Number Of Adults</span>
+              <div *ngIf="numberOfAdults.invalid && (numberOfAdults.dirty || numberOfAdults.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="numberOfAdults?.errors?.['required']">
+                  Number Of Adults is required
+                </div>
+              </div>
+              <select formControlName="numberOfAdults" [(ngModel)]="selectedNumberOfAdults" class="form-control">
+                <ng-container *ngFor="let adults of numberOfAdultsOptions">
+                  <option value={{adults}}>{{adults}}</option>
+                </ng-container>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Number Of Children</span>
+              <div *ngIf="numberOfChildren.invalid && (numberOfChildren.dirty || numberOfChildren.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="numberOfChildren?.errors?.['required']">
+                  Number Of Children is required
+                </div>
+              </div>
+              <select formControlName="numberOfChildren" [(ngModel)]="selectedNumberOfChildren" class="form-control">
+                <ng-container *ngFor="let children of numberOfChildrenOptions">
+                  <option value={{children}}>{{children}}</option>
+                </ng-container>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Terms</span>
+              <select formControlName="terms" [(ngModel)]="selectedTermsOption" class="form-control">
+                <ng-container *ngFor="let terms of termsOptions">
+                  <option [value]=terms>{{terms}}</option>
+                </ng-container>
+              </select>
+              <div *ngIf="terms.invalid && (terms.dirty || terms.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="terms?.errors?.['required']">
+                  Terms field is required
+                </div>
+              </div>
+              <span class="select-arrow"></span>
+            </div>
+          </form>
+        </div>
+
+        <!--Modal Body End-->
+        <div class="modal-footer">
+          <button type="button" id="close-2" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
+
+          <button *ngIf="showAdd" type="button" (click)="postTypeReservation()" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+          <button *ngIf="showUpdate" type="button" (click)="updateReservationType()" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Second modal ends here----------------------------------------------------------------------------------------->
+  <!-- begin footer -->
+  <div class="container">
+    <div style="padding-left: 30%">
+
+      <ngb-pagination [(page)]="pageNumber"
+                      [pageSize]="sizeNumber"
+                      [collectionSize]="totalElements"
+                      [maxSize]="5"
+                      [boundaryLinks]="true"
+                      (pageChange)="getReservations()">
+
+      </ngb-pagination>
+
+    </div>
+
+  </div>
+  <!-- Table Modal -->
+  <div class="modal fade" id="tableReservationTypeModal" tabindex="-1" role="dialog" aria-labelledby="tableReservationTypeModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+
+        <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+          <div class="container-fluid">
+            <h1 style="color:white">Reservation Type CRUD Functions</h1>
+            <button style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </nav>
+
+        <div class="modal-header">
+          <table class="table-responsive  table table-striped mt-3 mx-5" tabindex="0">
+            <thead>
+              <tr>
+
+                <th style="vertical-align:top" scope="col">Id</th>
+                <th style="vertical-align:top" scope="col">Number Of Rooms</th>
+                <th style="vertical-align:top" scope="col">Room Type</th>
+                <th style="vertical-align:top" scope="col">Number Of Persons</th>
+                <th style="vertical-align:top" scope="col">Number Of Children</th>
+                <th style="vertical-align:top" scope="col">Terms</th>
+                <th style="vertical-align:top" scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let reservationType of reservationTypes">
+                <td>{{reservationType.id}}</td>
+                <td class="px-5">{{reservationType.numberOfRooms}}</td>
+                <td class="px-5">{{reservationType.roomType}}</td>
+                <td class="px-5">{{reservationType.numberOfAdults}}</td>
+                <td class="px-5">{{reservationType.numberOfChildren}}</td>
+                <td class="px-5">{{reservationType.terms}}</td>
+
+                <td>
+                  <div style="width:200px">
+                    <button (click)="editReservationType(reservationType)" type="button" data-bs-toggle="modal" data-bs-target="#reservationTypeModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit </button>
+                    <button (click)="deleteReservationType(reservationType.id)" class="btn btn-danger mx-2"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+

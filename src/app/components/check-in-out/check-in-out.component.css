@@ -1,0 +1,36 @@
+.showHideReservationInfoButton {
+  padding-left:0px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+
+.showHideNonRequiredCustomerInfoButton {
+  padding-left: 0px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+
+.showHideRestCustomersButton {
+  padding-left: 0px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+
+.formBorder {
+  border: 3px solid gray;
+  border-radius: 20px;
+  padding: 10px;
+  margin: 2px;
+}

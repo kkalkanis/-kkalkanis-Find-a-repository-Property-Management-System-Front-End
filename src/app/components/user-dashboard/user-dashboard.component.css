@@ -1,0 +1,17 @@
+/*distance between header bar elements*/
+.navbar-nav > li {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+  /*header links color*/
+  .navbar-nav > li > a {
+    color: #2a5192;
+    font-size: 22px;
+  }
+/*distance between buttons*/
+.headerButtons {
+  margin-left: 50px;
+  width: 160px;
+  height: 40px;
+}

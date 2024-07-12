@@ -1,0 +1,193 @@
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <h1 class="pl-1" style="color:white">Rooms CRUD Functions</h1>
+  <button (click)="clickAddRoom()" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="px-1 btn btn-success mr-2"><i class="fa-solid fa-plus"></i> Add Room</button>
+</nav>
+
+
+<div class="container-fluid">
+  <table class="table  mt-3" tabindex="0">
+    <thead>
+      <tr>
+        <th scope="col">Room Id</th>
+        <th scope="col">Description</th>
+        <th scope="col">Room Number</th>
+        <th scope="col">Room Type</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tempRoom of rooms">
+        <td>{{tempRoom.id}}</td>
+        <td>{{tempRoom.description}}</td>
+        <td>{{tempRoom.roomNumber}}</td>
+        <td>{{tempRoom.type}}</td>
+        <td>
+          <button (click)="onEdit(tempRoom)" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button (click)="addPricing(tempRoom.roomNumber)" type="button" data-bs-toggle="modal" data-bs-target="#pricingRoomModal" class="btn btn-success mx-3"> <i class="fa-solid fa-money-check-dollar"></i>  Add Pricing</button>
+          <button (click)="deleteRoom(tempRoom.roomNumber)" class="btn btn-danger mx-1"><i class="fa-solid fa-trash-can"></i>  Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Type Details</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Modal Body Start-->
+        <div class="modal-body">
+          <form [formGroup]="formValue">
+            <div class="form-group">
+              <label for="exampleInputType">Room Number </label>
+              <input formControlName="roomNumber" type="number" class="form-control" id="exampleInputType" aria-describedby="TypeHelp" placeholder="Room Number">
+              <div *ngIf="roomNumber.invalid && (roomNumber.dirty || roomNumber.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="roomNumber?.errors?.['required']">
+                  RoomNumber is required
+                </div>
+                <div *ngIf="roomNumber?.errors?.['min']">
+                  RoomNumber must be at least 1
+                </div>
+                <div *ngIf="roomNumber?.errors?.['max']">
+                  RoomNumber must be max 999
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="standard-select">Type</label>
+              <div class="select">
+                <select formControlName="type" [(ngModel)]="selected">
+                  <option *ngFor="let types of roomTypes" [value]="types.type">{{types.type}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleFormControlDescription">Description</label>
+              <textarea formControlName="description" class="form-control" id="exampleFormControlDescription" rows="3"></textarea>
+              <div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="description?.errors?.['required']">
+                  Description is required
+                </div>
+                <div *ngIf="description?.errors?.['maxlength']">
+                  Description must be max 50 characters long
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleInputPersons">Status</label>
+              <input formControlName="status" type="text" class="form-control" id="exampleInputPersons" aria-describedby="TypeHelp" placeholder="Status">
+              <div *ngIf="status.invalid && (status.dirty || status.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="status?.errors?.['maxlength']">
+                  Status must be max 50 characters long
+                </div>
+              </div>
+            </div>
+            <!--button type="submit" class="btn btn-primary">Submit</!--button-->
+          </form>
+        </div>
+        <!--Modal Body End-->
+        <div class="modal-footer">
+          <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+          <button [disabled]="isLoading" *ngIf="showAdd" type="button" (click)="postRoom()" class="btn btn-primary">
+            <img style="height:20px; width:20px" *ngIf="isLoading" src="assets/spinner.gif" /><i class="fa-solid fa-plus"></i> Add
+          </button>
+          <button *ngIf="showUpdate" type="button" (click)="updateRoom()" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- begin footer -->
+  <div class="container">
+    <div style="padding-left: 30%">
+
+      <ngb-pagination [(page)]="pageNumber"
+                      [pageSize]="sizeNumber"
+                      [collectionSize]="theTotalElements"
+                      [maxSize]="5"
+                      [boundaryLinks]="true"
+                      (pageChange)="getRooms()">
+
+      </ngb-pagination>
+
+    </div>
+
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="pricingRoomModal" tabindex="-1" role="dialog" aria-labelledby="pricingRoomModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Customer Pricing Details</h3>
+          <button id="closePricingModal" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Modal Body Start-->
+        <div class="modal-body">
+          <form [formGroup]="formValue2">
+
+            <div class="form-group">
+              <label for="exampleInputType">Room Number</label>
+              <input [disabled]="true" formControlName="roomNumber2" type="number" class="form-control" id="exampleInputType" aria-describedby="TypeHelp">
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Customers</span>
+              <div *ngIf="customers.invalid && (customers.dirty || customers.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="customers?.errors?.['required']">
+                  Customer is required
+                </div>
+              </div>
+              <select (change)="customerSelectedHandler($event)" formControlName="customers" class="form-control" [(ngModel)]="selectedCustomerObject.customerId">
+                <option *ngIf="selectedCustomerName == 'Not checked in yet'">{{selectedCustomerName}}</option>
+                <ng-container *ngFor="let customer of customersByRoom">
+                  <option value={{customer.customerId}}>{{customer.firstName}} {{customer.lastName}}</option>
+                </ng-container>
+              </select>
+              <span class="select-arrow"></span>
+            </div>
+
+
+            <div class="form-group">
+              <label for="exampleInputType">Price</label>
+              <input formControlName="price2" type="number" class="form-control" id="exampleInputType" aria-describedby="TypeHelp" placeholder="Add pricing">
+              <div *ngIf="price2.invalid && (price2.dirty || price2.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="price2?.errors?.['required']">
+                  Price is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleInputType">Description</label>
+              <input formControlName="description2" type="text" class="form-control" id="exampleInputType" aria-describedby="TypeHelp" placeholder="Register the products ">
+              <div *ngIf="description2.invalid && (description2.dirty || description2.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="description2?.errors?.['required']">
+                  Description is required
+                </div>
+              </div>
+            </div>
+
+
+          </form>
+        </div>
+
+        <!--Modal Body End-->
+        <div class="modal-footer">
+          <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+          <button (click)="addCustomerBilling()" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+        </div>
+      </div>
+    </div>
+  </div>

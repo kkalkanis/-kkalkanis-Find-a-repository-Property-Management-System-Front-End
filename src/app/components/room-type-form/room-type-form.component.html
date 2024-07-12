@@ -1,0 +1,120 @@
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <h1 class="pl-1" style="color:white">Room Type CRUD Functions</h1>
+  <button (click)="clickAddType()" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-success mr-2"><i class="fa-solid fa-plus"> </i> Add Type</button>
+</nav>
+
+
+<div class="container-fluid">
+  <table class="table  mt-3" tabindex="0">
+    <thead>
+      <tr>
+        <th scope="col">Type Id</th>
+        <th scope="col">Type</th>
+        <th scope="col">Description</th>
+        <th scope="col">Number Of Persons</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tempType of roomTypes">
+        <td>{{tempType.id}}</td>
+        <td>{{tempType.type}}</td>
+        <td>{{tempType.description}}</td>
+        <td>{{tempType.numberOfPersons}}</td>
+        <td>
+          <button (click)="onEdit(tempType)" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button (click)="deleteType(tempType.type)" class="btn btn-danger mx-2"><i class="fa-solid fa-trash-can"></i> Delete</button>
+        </td>
+      </tr>
+    </tbody>
+
+
+  </table>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Type Details</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Modal Body Start-->
+        <div class="modal-body">
+          <form [formGroup]="formValue">
+            <div class="form-group">
+              <label for="exampleInputType">Type </label>
+              <input formControlName="type" type="text" class="form-control" id="exampleInputType" aria-describedby="TypeHelp" placeholder="Type">
+              <div *ngIf="type.invalid && (type.dirty || type.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="type?.errors?.['required']">
+                  Type is required
+                </div>
+                <div *ngIf="type?.errors?.['minlength']">
+                  Type must be at least 2 characters long
+                </div>
+                <div *ngIf="type?.errors?.['maxlength']">
+                  Type must be max 2 characters long
+                </div>
+              </div>
+
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPersons">Number Of Persons </label>
+              <input formControlName="numberOfPersons" type="number" class="form-control" id="exampleInputPersons" aria-describedby="TypeHelp" placeholder="Number Of Persons">
+              <div *ngIf="numberOfPersons.invalid && (numberOfPersons.dirty || numberOfPersons.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="numberOfPersons?.errors?.['required']">
+                  Number Of Persons is required
+                </div>
+                <div *ngIf="numberOfPersons?.errors?.['min']">
+                  Number Of Persons must be at least 1
+                </div>
+                <div *ngIf="numberOfPersons?.errors?.['max']">
+                  Number Of Persons must be max 20
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlDescription">Description</label>
+              <textarea formControlName="description" class="form-control" id="exampleFormControlDescription" rows="3"></textarea>
+              <div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="description?.errors?.['required']">
+                  Description is required
+                </div>
+                <div *ngIf="description?.errors?.['maxlength']">
+                  Description must be max 50 characters long
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!--Modal Body End-->
+        <div class="modal-footer">
+          <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+          <button [disabled]="isLoading" *ngIf="showAdd" type="button" (click)="postType()" class="btn btn-primary">
+            <img style="height:20px; width:20px" *ngIf="isLoading" src="assets/spinner.gif" /><i class="fa-solid fa-plus"> </i> Add
+          </button>
+          <button *ngIf="showUpdate" type="button" (click)="updateType()" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- begin footer -->
+  <div class="container">
+    <div style="padding-left: 30%">
+
+      <ngb-pagination [(page)]="pageNumber"
+                      [pageSize]="sizeNumber"
+                      [collectionSize]="theTotalElements"
+                      [maxSize]="5"
+                      [boundaryLinks]="true"
+                      (pageChange)="getTypes()">
+
+      </ngb-pagination>
+
+    </div>
+
+  </div>

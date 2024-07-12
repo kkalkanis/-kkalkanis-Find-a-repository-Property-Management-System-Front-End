@@ -1,0 +1,286 @@
+
+
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <h1 class="pl-1" style="color:white">Tour Contracts CRUD Functions</h1>
+  <button (click)="clickAddContract()" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-success mr-2"> <i class="fa-solid fa-plus"></i> Add Contract</button>
+</nav>
+
+
+
+<div class="container-fluid">
+  <table class="table  mt-3" tabindex="0">
+    <thead>
+      <tr>
+        <th scope="col">Contract Serial Number</th>
+        <th scope="col">Tour Operator</th>
+        <th scope="col">From</th>
+        <th scope="col">To</th>
+        <th scope="col">Room Type Contract Functions</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tempContracts of contracts">
+        <td>{{tempContracts.id}}</td>
+        <td>{{tempContracts.tourOperator}}</td>
+        <td>{{tempContracts.checkInDate}}</td>
+        <td>{{tempContracts.checkOutDate}}</td>
+
+        <td>
+          <button (click)="addRoomTypeContract(tempContracts.id)" type="button" data-bs-toggle="modal" data-bs-target="#contractRoomTypeModal" class="btn btn-warning"><i class="fa-solid fa-plus"></i> Add Contract Type</button>
+          <button (click)="retrieveContractRoomTypes(tempContracts.id)" type="button" data-bs-toggle="modal" data-bs-target="#tableContractTypeModal" class="btn btn-dark mx-2"><i class="fa-solid fa-eye"></i> View Contract Types</button>
+        </td>
+
+        <td>
+          <button (click)="onEdit(tempContracts)" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit </button>
+          <button (click)="deleteContract(tempContracts.id)" class="btn btn-danger mx-2"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Type Details</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Modal Body Start-->
+
+
+        <div class="modal-body">
+
+          <ng-container *ngIf="showOperatorField">
+            <span class="form-label">Tour Operator</span>
+            <select (change)="selectChangeOperatorHandler($event)" class="form-control">
+              <ng-container *ngFor="let operator of tourOperators">
+                <option value={{operator.name}}>{{operator.name}}</option>
+              </ng-container>
+            </select>
+          </ng-container>
+          <form [formGroup]="formValue">
+            <div class="form-group">
+              <label for="exampleInputType">From</label>
+              <input formControlName="checkIn" type="date" class="form-control" id="exampleInputType" aria-describedby="TypeHelp" placeholder="Check In Date">
+              <div *ngIf="checkIn.invalid && (checkIn.dirty || checkIn.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="checkIn?.errors?.['required']">
+                  Check In Date is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleInputType">To </label>
+              <input formControlName="checkOut" type="date" class="form-control" id="exampleInputType" aria-describedby="TypeHelp" placeholder="Check Out Date">
+              <div *ngIf="checkOut.invalid && (checkOut.dirty || checkOut.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="checkOut?.errors?.['required']">
+                  Check Out Date is required
+                </div>
+              </div>
+            </div>
+
+
+          </form>
+        </div>
+
+        <!--Modal Body End-->
+        <div class="modal-footer">
+          <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+          <button *ngIf="showAdd" type="button" (click)="postContract()" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+          <button *ngIf="showUpdate" type="button" (click)="updateContract()" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- begin footer -->
+  <div class="container">
+    <div style="padding-left: 30%">
+
+      <ngb-pagination [(page)]="pageNumber"
+                      [pageSize]="sizeNumber"
+                      [collectionSize]="theTotalElements"
+                      [maxSize]="5"
+                      [boundaryLinks]="true"
+                      (pageChange)="getContracts()">
+
+      </ngb-pagination>
+
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="contractRoomTypeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="exampleModalLabel">Type Details</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <!--Modal 2 Body Start-->
+
+
+        <div class="modal-body">
+          <form [formGroup]="formValue2">
+
+            <div class="form-group">
+              <span class="form-label">Room Type</span>
+              <div *ngIf="roomType.invalid && (roomType.dirty || roomType.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="roomType?.errors?.['required']">
+                  Room Type is required
+                </div>
+              </div>
+              <select formControlName="roomType" (change)="selectChangeHandler($event)" [(ngModel)]="selectedType" class="form-control">
+                <ng-container *ngFor="let types of roomTypes">
+                  <option value={{types.type}}>{{types.type}}</option>
+                </ng-container>
+              </select>
+              <span class="select-arrow"></span>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Number Of Rooms</span>
+              <input formControlName="numberOfRooms" class="form-control" type="number" placeholder="Enter Number Of Rooms">
+              <div *ngIf="numberOfRooms.invalid && (numberOfRooms.dirty || numberOfRooms.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="numberOfRooms?.errors?.['required']">
+                  Number Of Rooms is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Number Of Persons</span>
+              <input formControlName="numberOfPersons" [(ngModel)]="selectedNumberOfPersons" class="form-control" type="number" placeholder="Enter Number Of Persons">
+              <div *ngIf="numberOfPersons.invalid && (numberOfPersons.dirty || numberOfPersons.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="numberOfPersons?.errors?.['required']">
+                  Number Of Persons is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Terms</span>
+              <select (change)="changeTermsEventHandler($event)" formControlName="terms" [(ngModel)]="selectedTerms" class="form-control">
+                <ng-container *ngFor="let stat of termsOptions">
+                  <option [value]=stat>{{stat}}</option>
+                </ng-container>
+              </select>
+              <div *ngIf="terms.invalid && (terms.dirty || terms.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="terms?.errors?.['required']">
+                  Terms field is required
+                </div>
+              </div>
+              <span class="select-arrow"></span>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label">Rent Price</span>
+              <input formControlName="rentPrice" class="form-control" type="number" placeholder="Enter Rent Price (per person per day)">
+              <div *ngIf="rentPrice.invalid && (rentPrice.dirty || rentPrice.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="rentPrice?.errors?.['required']">
+                  Rent Price is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="selectedTerms!=termsOptions[3]">
+              <span class="form-label">Breakfast Price</span>
+              <input formControlName="breakfastPrice" class="form-control" type="number" placeholder="Enter Breakfast Price (per person per day)">
+              <div *ngIf="breakfastPrice.invalid && (breakfastPrice.dirty || breakfastPrice.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="breakfastPrice?.errors?.['required']">
+                  Breakfast Price is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="selectedTerms==termsOptions[0] || selectedTerms==termsOptions[1] && selectedTerms!=termsOptions[3]">
+              <span class="form-label">Lunch Price</span>
+              <input formControlName="lunchPrice" class="form-control" type="number" placeholder="Enter Lunch Price (per person per day)">
+              <div *ngIf="lunchPrice.invalid && (lunchPrice.dirty || lunchPrice.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="lunchPrice?.errors?.['required']">
+                  Lunch Price is required
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="selectedTerms==termsOptions[1] && selectedTerms!=termsOptions[3]">
+              <span class="form-label">Dinner Price</span>
+              <input formControlName="dinnerPrice" class="form-control" type="number" placeholder="Enter Dinner Price (per person per day)">
+              <div *ngIf="dinnerPrice.invalid && (dinnerPrice.dirty || dinnerPrice.touched)" class="alert alert-danger mt-1">
+                <div *ngIf="dinnerPrice?.errors?.['required']">
+                  Dinner Price is required
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!--Modal Body End-->
+        <div class="modal-footer">
+          <button type="button" id="close" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
+          <button *ngIf="showAdd" type="button" (click)="postContractRoomType()" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+          <button *ngIf="showUpdate" type="button" (click)="updateContractRoomType()" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="tableContractTypeModal" tabindex="-1" role="dialog" aria-labelledby="tableContractTypeModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+
+        <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+          <div class="container-fluid">
+            <h1 style="color:white">Contract Room Type CRUD Functions</h1>
+            <button style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </nav>
+
+        <div class="modal-header mx-5">
+          <table class="table-responsive  table table-striped mt-3 mx-5" tabindex="0">
+            <thead>
+              <tr>
+                <th style="vertical-align:top" scope="col">Id</th>
+                <th style="vertical-align:top" class="px-5" scope="col">Number Of Rooms</th>
+                <th style="vertical-align:top" class="px-5" scope="col">Terms</th>
+                <th style="vertical-align:top" class="px-5" scope="col">Room Type</th>
+                <th style="vertical-align:top" class="px-5" scope="col">Price</th>
+                <th style="vertical-align:top" class="px-5" scope="col">Action</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tempType of contractRoomTypes">
+                <td>{{tempType.id}}</td>
+                <td>{{tempType.numberOfRooms}}</td>
+                <td>{{tempType.terms}}</td>
+                <td>{{tempType.roomType}}</td>
+                <td>{{tempType.rentPrice}}</td>
+
+                <td>
+                  <div style="width:200px">
+                    <button (click)="editContractRoomType(tempType)" type="button" data-bs-toggle="modal" data-bs-target="#contractRoomTypeModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit </button>
+                    <button (click)="deleteContractRoomType(tempType.id)" class="btn btn-danger mx-2"> <i class="fa-solid fa-trash-can"></i> Delete</button>
+                  </div>
+                </td>
+
+
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+

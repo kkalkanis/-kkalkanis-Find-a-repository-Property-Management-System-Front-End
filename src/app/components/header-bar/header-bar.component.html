@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand-xl navbar-light nav-bounds" >
+  <a class="navbar-brand" href="#"><img src="assets/logo.png" /></a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon "></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+    </ul>
+    <form *ngIf="!isLoggedIn" class="form-inline my-2 my-lg-0 ">
+      <button routerLink="/login" class="btn btn-primary headerButtons" type="submit">Login</button>
+      <button routerLink="/signup" class="btn btn-success headerButtons" type="submit">Sign Up </button>
+    </form>
+    <form *ngIf="isLoggedIn" class="form-inline my-2 my-lg-0 ">
+      <button (click)="goToFrontDesk()"  class="btn btn-primary headerButtons ">Front Desk</button>
+      <button (click)="logOut()" class="btn btn-primary headerButtons ">Logout</button>
+    </form>
+  </div>
+</nav>

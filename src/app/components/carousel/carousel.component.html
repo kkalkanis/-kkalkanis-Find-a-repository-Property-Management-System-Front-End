@@ -1,0 +1,55 @@
+<!--style="background-color: rgb(58, 173, 201)-->
+<div class="gradient-custom-2 carouselDiv-bounds">
+  <div class="row g-0">
+    <div class="col-lg">
+      <div class="mt-5" style="text-align:center; padding-top:200px;">
+        <p style="font-size: 420%; font-family:Arial, Helvetica, sans-serif; line-height: 70%; color: aliceblue; ">Hotel Management</p><br />
+        <p style="font-size: 500%; font-family:Arial, Helvetica, sans-serif; line-height: 70%; color: aliceblue; ">SIMPLIFIED</p>
+        <p class="fs-3 mt-5" style="font-family: Arial, Helvetica, sans-serif; line-height: 100%; color: aliceblue">
+          Everything you'll need to manage your Hotel Business.
+        </p>
+        <button routerLink="/signup" style="width:200px;" class="mt-4 btn btn-success" type="submit">Get Started</button>
+
+      </div>
+    </div>
+    <div class="col-lg">
+      <ngb-carousel [showNavigationArrows]="true"
+                    [showNavigationIndicators]="true"
+                    [interval]="3000"
+                    [keyboard]="true"
+                    [pauseOnHover]="true"
+                    [wrap]="true"
+                    [activeId]="'secondSlide'">
+
+        <ng-template ngbSlide id="secondSlide">
+          <div class="picsum-img-wrapper">
+            <img src="assets/img-02.png" alt="Angular Carousel 2">
+          </div>
+          <div class="carousel-caption">
+            <h3>Anytime Anywhere Accessibility</h3>
+          </div>
+        </ng-template>
+
+        <ng-template ngbSlide id="fourthSlide">
+          <div class="picsum-img-wrapper">
+            <img src="assets/img-04.png" alt="Angular Carousel 4">
+          </div>
+          <div class="carousel-caption">
+            <h3>Countless Functionalities to Manage your Hotel</h3>
+          </div>
+        </ng-template>
+      </ngb-carousel>
+    </div>
+  </div>
+</div>
+
+<div style="background-color:white;" class="container-fluid py-5 ">
+  <div class="row">
+    <h1 class="text-center">Automate Operations. Increase Occupancy. Boost Revenues.</h1>
+    <h1 class="text-center">Enjoy RESERVE_IT with all the tools you need to manage your hotel in a more efficient way. RESERVE_IT is secure, reliable and fast.</h1>
+  </div>
+</div>
+
+<app-main-cards></app-main-cards>
+
+<app-footer></app-footer>

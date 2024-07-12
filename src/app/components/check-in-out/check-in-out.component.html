@@ -1,0 +1,469 @@
+<nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <div class="container-fluid">
+    <h1 style="color:white">Check In Board</h1>
+     
+    <div style="padding-left: 40%; background-color: rgb(71, 71, 71)" class="d-flex py-3 ">
+      <button (click)="clickMethod()" type="button" class="mx-5 px-5 btn btn-success"><i class="fa-solid fa-file-invoice-dollar"></i> Daily Charge</button>
+      <button style="height:4%" type="button" class="btn btn-primary mx-2" (click)="clickPrevious()"><i class="fa-solid fa-left-long"></i></button>
+      <h1 class="text-light m-1">{{currentDateString}}</h1>
+      <button style="height:4%" type="button" class="btn btn-primary mx-2" (click)="clickNext()"><i class="fa-solid fa-right-long"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!--Init of Reservations table-->
+<table class="table mt-3 mx-5" tabindex="0" style="max-width:1700px">
+  <thead>
+    <tr>
+      <th scope="col">Reservation Serial Number</th>
+      <th scope="col">Tour Operator Name</th>
+      <th scope="col">Reservation's Name</th>
+      <th scope="col">From</th>
+      <th scope="col">To</th>
+      <th scope="col">Status</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let tempReservations of reservations">
+      <td>{{tempReservations.id}}</td>
+      <td>{{tempReservations.tourOperatorName}}</td>
+      <td>{{tempReservations.reservationName}}</td>
+      <td>{{tempReservations.checkInDate}}</td>
+      <td>{{tempReservations.checkOutDate}}</td>
+      <td>{{tempReservations.status}}</td>
+      <td>
+        <button (click)="viewReservationTypes(tempReservations.id)" type="button" data-bs-toggle="modal" data-bs-target="#tableReservationTypeModal" class="btn btn-dark"><i class="fa-solid fa-eye"></i> View Reservation Types</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div style="margin-left:200px; margin-right:200px" class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="noReservationsDetected && reservations.length==0">
+  <h1 style="text-align:center">{{errorMessage}} {{currentDateString}}</h1>
+</div>
+<div style="margin-left:200px; margin-right:200px" class="alert alert-primary alert-dismissible fade show" role="alert"*ngIf="inReservationsCountPerDate > 0">
+  <h1 style="text-align:center">{{dailyChargeMessage}} </h1>
+</div>
+
+<!--End of Change Reservation's Status Modal-->
+<!--Init of Reservation's Type Modal-->
+<!-- Table Modal -->
+<div class="modal fade" id="tableReservationTypeModal" tabindex="-1" role="dialog" aria-labelledby="tableReservationTypeModal" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+        <div class="container-fluid">
+          <h1 style="color:white">Fill In Customer Information </h1>
+          <button style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="modal-header">
+        <table class="table-responsive  table table-striped mt-3 mx-5" tabindex="0">
+          <thead>
+            <tr>
+              <th style="vertical-align:top" scope="col">Id</th>
+              <th style="vertical-align:top" scope="col">Number Of Rooms</th>
+              <th style="vertical-align:top" scope="col">Room Type</th>
+              <th style="vertical-align:top" scope="col">Number Of Persons</th>
+              <th style="vertical-align:top" scope="col">Number Of Children</th>
+              <th style="vertical-align:top" scope="col">Terms</th>
+              <th style="vertical-align:top" scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let reservationType of reservationTypes">
+              <td>{{reservationType.id}}</td>
+              <td class="px-5">{{reservationType.numberOfRooms}}</td>
+              <td class="px-5">{{reservationType.roomType}}</td>
+              <td class="px-5">{{reservationType.numberOfAdults}}</td>
+              <td class="px-5">{{reservationType.numberOfChildren}}</td>
+              <td class="px-5">{{reservationType.terms}}</td>
+              <td>
+                <div style="width:400px">
+ 
+                    <button [disabled]=reservationTypeIdCheckIns?.includes(reservationType.id) (click)="fillInCustomerInfo(reservationType.id)" type="button" data-bs-toggle="modal" data-bs-target="#fillInCustomerInfo" class="btn btn-info"><i class="fa-solid fa-circle-info"></i> Fill In Customer Info </button>
+                    <button (click)="viewReservationTypeCheckIns(reservationType.id)" type="button" data-bs-toggle="modal" data-bs-target="#reservationTypeCheckIns" class="mx-1 btn btn-dark"><i class="fa-solid fa-eye"></i> View Check Ins</button>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End of Reservation's Type Modal-->
+<!--Init of FillInCustomerInfo Modal-->
+<!-- Table Modal -->
+<div class="modal fade" id="fillInCustomerInfo" tabindex="-1" role="dialog" aria-labelledby="fillInCustomerInfoModal" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+        <div class="container-fluid">
+          <h1 style="color:white">Fill In Customer Information</h1>
+          <button id="cancel" (click)="closeButtonPressed()" style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </nav>
+      <!--Modal Body Start-->
+
+      <div class="container">
+        <div class="modal-body">
+          <form class=" px-5 my-1" [formGroup]="formValue2">
+            <button (click)="showHideReservationTypeInfo()" class="showHideReservationInfoButton"><h2 style="color: #97BC62FF; text-align: center; line-height: 35px;">Show/Hide Reservation Type Info</h2></button>
+            <ng-container *ngIf="showHideReservationInfo">
+              <div class="form-group">
+                <span class="form-label">Room Type</span>
+                <input formControlName="roomType" class="form-control" type="text">
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Number Of Adults</span>
+                <input formControlName="numberOfAdults" class="form-control" type="number">
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Number Of Children</span>
+                <input formControlName="numberOfChildren" class="form-control" type="number">
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Terms</span>
+                <input formControlName="terms" class="form-control" type="text">
+              </div>
+            </ng-container>
+            <!--Rest of formValue 2, Customer Info -->
+            <div formGroupName="customerInfo">
+              <span class="form-label">Room Number</span>
+              <select [(ngModel)]="selectedRoom" formControlName="roomNumber" (change)="selectRoomOption($event)" class="form-control">
+                <ng-container *ngFor="let room of availableRooms">
+                  <option value={{room.roomNumber}}>{{room.roomNumber}}</option>
+                </ng-container>
+              </select>
+
+              <h2 style="color: #2C5F2D">#Customer 1 (Required)</h2>
+              <div class="form-group">
+                <span class="form-label">Firstname</span>
+                <input formControlName="firstName" class="form-control" type="text" placeholder="Enter Customer's FirstName">
+                <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="firstName?.errors?.['required']">
+                    Firstname is required
+                  </div>
+                  <div *ngIf="firstName?.errors?.['maxlength']">
+                    Firstname must be up to 50 characters long
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">LastName</span>
+                <input formControlName="lastName" class="form-control" type="text" placeholder="Enter Customer's LastName">
+                <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="lastName?.errors?.['required']">
+                    Last Name is required
+                  </div>
+                  <div *ngIf="lastName?.errors?.['maxlength']">
+                    Last Name must be up to 50 characters long
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Contact Phone</span>
+                <input formControlName="contactPhone" class="form-control" type="text" placeholder="Enter Customer's ContactPhone">
+                <div *ngIf="contactPhone.invalid && (contactPhone.dirty || contactPhone.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="contactPhone?.errors?.['required']">
+                    Contact Phone is required
+                  </div>
+                  <div *ngIf="contactPhone?.errors?.['maxlength']">
+                    Contact Phone must be up to 10 characters long
+                  </div>
+                  <div *ngIf="contactPhone?.errors?.['minlength']">
+                    Contact Phone must be at least 10 digits long
+                  </div>
+                  <div *ngIf="contactPhone?.errors?.['pattern']">
+                    Wrong Contact Phone format
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Email</span>
+                <input formControlName="email" class="form-control" type="email" placeholder="Enter Customer's Email">
+                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="email?.errors?.['required']">
+                    Email is required
+                  </div>
+                  <div *ngIf="email?.errors?.['pattern']">
+                    Wrong Email format
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Passport</span>
+                <input formControlName="passport" class="form-control" type="text" placeholder="Enter Customer's Passport">
+                <div *ngIf="passport.invalid && (passport.dirty || passport.touched)" class="alert alert-danger mt-1">
+                  <div *ngIf="passport?.errors?.['required']">
+                    Passport is required
+                  </div>
+                  <div *ngIf="passport?.errors?.['maxlength']">
+                    Passport must be up to 10 characters long
+                  </div>
+                </div>
+              </div>
+
+              <button class="showHideNonRequiredCustomerInfoButton" (click)="showHideCustomerNonRequiredInf()"><h2 style="color: #97BC62FF; text-align: center; line-height: 35px; ">Show/Hide Customer Non Required Info</h2></button>
+              <ng-container *ngIf="showHideCustomerNonRequiredInfo">
+                <div class="form-group">
+                  <span class="form-label">Country</span>
+                  <input formControlName="country" class="form-control" type="text" placeholder="Enter Customer's Country">
+                  <div *ngIf="country.invalid && (country.dirty || country.touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="country?.errors?.['maxlength']">
+                      Country must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">City</span>
+                  <input formControlName="city" class="form-control" type="text" placeholder="Enter Customer's City">
+                  <div *ngIf="city.invalid && (city.dirty || city.touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="city?.errors?.['maxlength']">
+                      City must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">Address</span>
+                  <input formControlName="address" class="form-control" type="text" placeholder="Enter Customer's Address">
+                  <div *ngIf="address.invalid && (address.dirty || address.touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="address?.errors?.['maxlength']">
+                      Address must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">Zip Code</span>
+                  <input formControlName="zipCode" class="form-control" type="text" placeholder="Enter Customer's Zip Code">
+                  <div *ngIf="zipCode.invalid && (zipCode.dirty || zipCode.touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="zipCode?.errors?.['maxlength']">
+                      Zip Code must be up to 9 characters long
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <ng-container *ngIf="reservationTypeObj.numberOfAdults <0">
+        <div style="padding-left:85px" class="my-1" [formGroup]="formValue3">
+          <ng-container formArrayName="customers">
+            <ng-container *ngFor="let formCustomer of customers.controls; let idx=index">
+              <div style="padding-right:90px" class="form-group" [formGroup]="toFormGroup(formCustomer)">
+                <div class="row">
+                  <div class="col-sm-2">
+                    <h2 style="color: #2C5F2D">#Customer {{idx+2}}</h2>
+                  </div>
+                  <!--
+                    <div class="col-sm-2 px-0">
+                      <button (click)="deleteCustomer(idx)" class=" btn  mx-2"><i style="color:black;" class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                  -->
+                </div>
+
+
+
+
+                <div class="form-group">
+                  <span class="form-label">Firstname</span>
+                  <input formControlName="firstName2" class="form-control" type="text" placeholder="Enter Customer's FirstName">
+                  <div *ngIf="formCustomer.get('firstName2').invalid && (formCustomer.get('firstName2').dirty || formCustomer.get('firstName2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="firstName2?.errors?.['required']">
+                      Firstname is required
+                    </div>
+                    <div *ngIf="firstName2?.errors?.['maxlength']">
+                      Firstname must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">LastName</span>
+                  <input formControlName="lastName2" class="form-control" type="text" placeholder="Enter Customer's LastName">
+                  <div *ngIf="formCustomer.get('lastName2').invalid && (formCustomer.get('lastName2').dirty || formCustomer.get('lastName2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="lastName2?.errors?.['required']">
+                      Last Name is required
+                    </div>
+                    <div *ngIf="lastName2?.errors?.['maxlength']">
+                      Last Name must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">Contact Phone</span>
+                  <input formControlName="contactPhone2" class="form-control" type="text" placeholder="Enter Customer's ContactPhone">
+                  <div *ngIf="formCustomer.get('contactPhone2').invalid && (formCustomer.get('contactPhone2').dirty || formCustomer.get('contactPhone2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="contactPhone2?.errors?.['required']">
+                      Contact Phone is required
+                    </div>
+                    <div *ngIf="contactPhone2?.errors?.['maxlength']">
+                      Contact Phone must be up to 10 characters long
+                    </div>
+                    <div *ngIf="contactPhone2?.errors?.['minlength']">
+                      Contact Phone must be at least 10 digits long
+                    </div>
+                    <div *ngIf="contactPhone2?.errors?.['pattern']">
+                      Wrong Contact Phone format
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">Email</span>
+                  <input formControlName="email2" class="form-control" type="email" placeholder="Enter Customer's Email">
+                  <div *ngIf="formCustomer.get('email2').invalid && (formCustomer.get('email2').dirty || formCustomer.get('email2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="email2?.errors?.['required']">
+                      Email is required
+                    </div>
+                    <div *ngIf="email2?.errors?.['pattern']">
+                      Wrong Email format
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">Passport</span>
+                  <input formControlName="passport2" class="form-control" type="text" placeholder="Enter Customer's Passport">
+                  <div *ngIf="formCustomer.get('passport2').invalid && (formCustomer.get('passport2').dirty || formCustomer.get('passport2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="passport2?.errors?.['required']">
+                      Passport is required
+                    </div>
+                    <div *ngIf="passport2?.errors?.['maxlength']">
+                      Passport must be up to 10 characters long
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <span class="form-label">Country</span>
+                  <input formControlName="country2" class="form-control" type="text" placeholder="Enter Customer's Country">
+                  <div *ngIf="formCustomer.get('country2').invalid && (formCustomer.get('country2').dirty || formCustomer.get('country2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="country2?.errors?.['maxlength']">
+                      Country must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">City</span>
+                  <input formControlName="city2" class="form-control" type="text" placeholder="Enter Customer's City">
+                  <div *ngIf="formCustomer.get('city2').invalid && (formCustomer.get('city2').dirty || formCustomer.get('city2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="city2?.errors?.['maxlength']">
+                      City must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">Address</span>
+                  <input formControlName="address2" class="form-control" type="text" placeholder="Enter Customer's Address">
+                  <div *ngIf="formCustomer.get('address2').invalid && (formCustomer.get('address2').dirty || formCustomer.get('address2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="address2?.errors?.['maxlength']">
+                      Address must be up to 50 characters long
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <span class="form-label">Zip Code</span>
+                  <input formControlName="zipCode2" class="form-control" type="text" placeholder="Enter Customer's Zip Code">
+                  <div *ngIf="formCustomer.get('zipCode2').invalid && (formCustomer.get('zipCode2').dirty || formCustomer.get('zipCode2').touched)" class="alert alert-danger mt-1">
+                    <div *ngIf="zipCode2?.errors?.['maxlength']">
+                      Zip Code must be up to 9 characters long
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </ng-container>
+            <!--
+            <button *ngIf="leftCustomersToCreate > 0" class="showHideRestCustomersButton" (click)="addCustomer()"><h2 style="color: #97BC62FF; text-align: center; line-height: 35px; ">Add Next Customer</h2></button>
+             -->
+          </ng-container>
+
+        </div>
+      </ng-container>
+
+      <div class="container p-1">
+        <div style="text-align:center" class="mx-5 alert-danger" *ngIf="noRoomsHasLeft">
+          <h1>No rooms has left for room type {{currentRoomType}} at requested date {{currentDateString}}</h1>
+        </div>
+        <button id="checkInButton" (click)="checkInButtonPressed()" style="margin-left:45%" type="button" class="btn btn-success"><i class="fa-solid fa-cart-flatbed"></i> Check In </button>
+        <button (click)="closeButtonPressed()" type="button" id="close-1" class="mx-1 btn  btn-secondary close" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Table Modal -->
+<div class="modal fade" id="reservationTypeCheckIns" tabindex="-1" role="dialog" aria-labelledby="reservationTypeCheckIns" aria-hidden="true">
+  <div style="width:1000px" class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+        <div class="container-fluid">
+          <h1 style="color:white">Reservation Type Check Ins</h1>
+          <button style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="mx-5 modal-header">
+        <table class="table-responsive   table table-striped mt-3 mx-5" tabindex="0">
+          <thead>
+            <tr>
+              <th scope="col">Check In Id</th>
+              <th scope="col">Room Number</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Contact Phone</th>
+              <th scope="col">Email</th>
+              <th scope="col">Passport</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let checkIn of reservationTypeCheckIns">
+              <td>{{checkIn.id}}</td>
+              <td>{{checkIn.roomNumber}}</td>
+              <td>{{checkIn.customer.firstName}}</td>
+              <td>{{checkIn.customer.lastName}}</td>
+              <td>{{checkIn.customer.contactPhone}}</td>
+              <td>{{checkIn.customer.email}}</td>
+              <td>{{checkIn.customer.passport}}</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

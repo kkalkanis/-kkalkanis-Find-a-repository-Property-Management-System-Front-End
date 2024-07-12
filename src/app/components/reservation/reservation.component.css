@@ -1,0 +1,14 @@
+
+
+tr, th {
+  padding: 10px;
+  text-align: center;
+}
+
+@media (min-width:400px) and ( max-width: 600px) {
+  .header {
+    /* force devises with a smaller width to observe this style */
+    min-width: 1000px;
+    background-color: rgb(71, 71, 71);
+  }
+}

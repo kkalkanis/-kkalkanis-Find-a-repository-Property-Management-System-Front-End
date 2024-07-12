@@ -1,0 +1,57 @@
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <div class="container-fluid">
+    <h1 style="color:white">Room Availability Board</h1>
+    <div class="d-flex">
+    </div>
+  </div>
+
+</nav>
+
+<table class="table table-responsive table-bordered mt-5 mx-5 px-0 container"tabindex="0">
+  <thead>
+    <tr>
+      <th class="bg-light"style="text-align: center; vertical-align: middle"rowspan="2" scope="col">Room Number</th>
+      <th *ngIf="coupleOfMonth[1]" style="text-align:center" colspan="30">{{coupleOfMonth[0]}} {{coupleOfYears[0]}} - {{coupleOfMonth[1]}} {{coupleOfYears[1]}} </th>
+      <th *ngIf="coupleOfMonth[1]==undefined" style="text-align:center" colspan="30">{{coupleOfMonth[0]}} {{coupleOfYears[0]}}  </th>
+    </tr>
+    <tr>
+        <td *ngFor="let day of monthsAndDays">{{day}}</td>   
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let room of rooms">
+      <th class="px-5 py-3" scope="row">{{room.roomNumber}} </th>
+      <ng-container *ngFor="let avail of availability">
+          <ng-container *ngIf="room.roomNumber==avail.roomNumber">
+            <ng-container *ngIf="avail.available==0">
+              <td (mouseenter)="over(room.roomNumber,avail.date)" title={{stringUnifyCustomers}} style="padding:0" class="bg-primary"></td>
+            </ng-container>
+            <ng-container *ngIf="avail.available==1">
+              <td class="bg-light"></td>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+    </tr>   
+      </tbody>
+</table>
+
+  <div class="mx-2 bg-primary" style="width:15px;height:15px">
+    <h4 style="width:400px" class="container text-danger"> *Reserved Rooms</h4>
+  </div>
+
+<!-- begin footer -->
+<div class="container">
+  <div style="padding-left: 30%">
+
+    <ngb-pagination [(page)]="pageNumber"
+                    [pageSize]="sizeNumber"
+                    [collectionSize]="theTotalElements"
+                    [maxSize]="5"
+                    [boundaryLinks]="true"
+                    (pageChange)="getAvailability('')">
+
+    </ngb-pagination>
+
+  </div>
+
+</div>

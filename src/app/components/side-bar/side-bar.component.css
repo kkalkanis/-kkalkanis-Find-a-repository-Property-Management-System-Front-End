@@ -1,0 +1,13 @@
+
+
+@media(max-width:60em) { /* Breakpoint only for mobile */
+  .sidebar {
+    height:1650px;
+  }
+}
+.isDisabled {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.5;
+  text-decoration: none;
+}

@@ -1,0 +1,368 @@
+<nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <div class="container-fluid">
+    <h1 style="color:white">Check Out Board</h1>
+    <div style="padding-left: 40%; background-color: rgb(71, 71, 71)" class="d-flex py-3 ">
+      <button style="height:4%" type="button" class="btn btn-primary mx-2" (click)="clickPrevious()"><i class="fa-solid fa-left-long"></i></button>
+      <h1 class="text-light m-1">{{currentDateString}}</h1>
+      <button style="height:4%" type="button" class="btn btn-primary mx-2" (click)="clickNext()"><i class="fa-solid fa-right-long"></i></button>
+    </div>
+  </div>
+</nav>
+
+<!--Init of Reservations table-->
+<table class="table mt-3 mx-5" tabindex="0" style="max-width:1700px">
+  <thead>
+    <tr>
+      <th scope="col">Reservation Serial Number</th>
+      <th scope="col">Status</th>
+      <th scope="col">Tour Operator Name</th>
+      <th scope="col">Reservation's Name</th>
+      <th scope="col">From</th>
+      <th scope="col">To</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let tempReservations of departures">
+      <td>{{tempReservations.id}}</td>
+      <td>{{tempReservations.status}}</td>
+      <td>{{tempReservations.tourOperatorName}}</td>
+      <td>{{tempReservations.reservationName}}</td>
+      <td>{{tempReservations.checkInDate}}</td>
+      <td>{{tempReservations.checkOutDate}}</td>
+      <td>
+        <button (click)="retrieveDepartureTypes(tempReservations.id,tempReservations.tourOperatorName,tempReservations)" type="button" data-bs-toggle="modal" data-bs-target="#tableReservationTypeModal" class="btn btn-dark"><i class="fa-solid fa-eye"></i> View Reservation Types</button>
+        <button (click)="checkOutButtonClicked(tempReservations.id,tempReservations)" type="button" data-bs-toggle="modal" data-bs-target="#checkOutSelf" class="btn btn-success mx-1">Payment</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div style="margin-left:200px; margin-right:200px" class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="noDeparturesDetected && departures.length==0">
+  <h1 style="text-align:center">{{errorMessage}} {{currentDateString}}</h1>
+</div>
+<!--End of Reservations table-->
+<!--Second Modal for add reservation type begins here----------------------------------------------------->
+<!-- Modal -->
+<!-- Table Modal -->
+<div class="modal fade" id="tableReservationTypeModal" tabindex="-1" role="dialog" aria-labelledby="tableReservationTypeModal" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+        <div class="container-fluid">
+          <h1 style="color:white">Reservation Types</h1>
+          <button style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="modal-header">
+        <table class="table-responsive table table-striped mt-3 mx-5" tabindex="0">
+          <thead>
+            <tr>
+
+              <th style="vertical-align:top" scope="col">Id</th>
+              <th style="vertical-align:top" class="px-5" scope="col">Number Of Rooms</th>
+              <th style="vertical-align:top" class="px-5" scope="col">Room Type</th>
+              <th style="vertical-align:top" class="px-5" scope="col">Number Of Persons</th>
+              <th style="vertical-align:top" class="px-5" scope="col">Number Of Children</th>
+              <th style="vertical-align:top" class="px-5" scope="col">Terms</th>
+              <th style="vertical-align:top" class="px-5" scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let reservationType of reservationTypes">
+              <td>{{reservationType.id}}</td>
+              <td class="px-5">{{reservationType.numberOfRooms}}</td>
+              <td class="px-5">{{reservationType.roomType}}</td>
+              <td class="px-5">{{reservationType.numberOfAdults}}</td>
+              <td class="px-5">{{reservationType.numberOfChildren}}</td>
+              <td class="px-5">{{reservationType.terms}}</td>
+
+              <td>
+                <button (click)="viewCheckOutRoomsByRoomType(reservationType.id,reservationType.roomType,reservationType.numberOfAdults)" type="button" data-bs-toggle="modal" data-bs-target="#tableRoomsToCheckOut" class="btn btn-primary"><i class="fas fa-bed"></i> View Check Out Rooms</button>
+
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Table Modal -->
+<div class="modal fade" id="tableRoomsToCheckOut" tabindex="-1" role="dialog" aria-labelledby="tableRoomsToCheckOutModal" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+        <div class="container-fluid">
+          <h1 style="color:white">Check Out Rooms</h1>
+          <button style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="modal-header">
+        <table class="table-responsive  table table-striped mt-3 mx-5" tabindex="0">
+          <thead>
+            <tr>
+              <th style="vertical-align:top" scope="col">#Id</th>
+              <th style="vertical-align:top" class="px-3" scope="col">Reservation Id</th>
+              <th style="vertical-align:top" class="px-3" scope="col">Room Number</th>
+              <th style="vertical-align:top" class="px-3" scope="col">Room Type</th>
+              <th style="vertical-align:top" class="px-3" scope="col">Number OfAdults</th>
+              <th class="px-3" *ngFor="let adultNum of currentNumberOfPersons" style="vertical-align:top" scope="col">Customer {{currentNumberOfPersons[adultNum]+1}}</th>
+              <th class="px-3" style="vertical-align:top" scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let checkIn of departureRoomsByType;index as i">
+              <td>{{checkIn.id}}</td>
+              <td class="px-3">{{checkIn.reservationId}}</td>
+              <td class="px-3">{{checkIn.roomNumber}}</td>
+              <td class="px-3">{{currentNumberOfPersons.length}}</td>
+              <td class="px-3">{{currentTypeOfRoom}}</td>
+              <td class="px-3" *ngFor="let customer of departureRoomsByType[i].customers ">
+                {{customer.firstName}} {{customer.lastName}}
+              </td>
+
+              <td>
+                <div style="width:200px">
+                  <button data-bs-toggle="modal" data-bs-target="#tablePreviewReceipt" (click)="previewReceipt(checkIn.reservationId,checkIn.roomNumber,departureRoomsByType[i].customers)" class="btn btn-info"><i class="fa-solid fa-calculator"></i>  Preview Receipt</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-body">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#tableReservationTypeModal" class="btn btn-danger"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Table Modal -->
+<div class="modal fade" id="tablePreviewReceipt" tabindex="-1" role="dialog" aria-labelledby="tablePreviewReceiptModal" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <nav class="my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+        <div class="container-fluid">
+          <h1 style="color:white">Reservation Type CRUD Functions</h1>
+          <button style="color:antiquewhite" type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </nav>
+      <ng-container *ngFor="let customer of currentCustomersToTakeReceipt;index as i">
+        <div class="container py-1">
+          <button *ngIf="i==0" type="button" data-bs-toggle="modal" data-bs-target="#tableRoomsToCheckOut" class="btn btn-danger"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back </button>
+        </div>
+        <div class="modal-header">
+          <div class="invoice-box" id="{{ 'htmlData' + i }}">
+            <table cellpadding="0" cellspacing="0">
+              <tr class="top">
+                <td colspan="2">
+                  <table>
+                    <tr>
+                      <td class="title">
+                        <img src="assets/logo.png" style="width: 100%; max-width: 300px" />
+                      </td>
+
+                      <td>
+                        Receipt #: {{hotelSpecificsObj.receiptNumber+i+1}} <br />
+                        Created: {{currentDateString}}<br />
+                        Due: {{currentDateString}}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <tr class="information">
+                <td colspan="2">
+                  <table>
+                    <tr>
+                      <td>
+                        <strong>
+                          Country: {{hotelSpecificsObj.country}}<br />
+                          City: {{hotelSpecificsObj.city}}<br />
+                          Address: {{hotelSpecificsObj.address}}, {{hotelSpecificsObj.postalCode}} <br />
+                        </strong>
+                        <hr />
+                        <strong>Check In Date: {{currentReservation.checkInDate}}</strong> <br />
+                        <strong>Check Out Date: {{currentReservation.checkOutDate}} </strong>
+                      </td>
+                      <td>
+                        Full Name : {{currentCustomersToTakeReceipt[i].firstName}} {{currentCustomersToTakeReceipt[i].lastName}}<br />
+                        Address : {{currentCustomersToTakeReceipt[i].country}}, {{currentCustomersToTakeReceipt[i].city}} <br />
+                        {{currentCustomersToTakeReceipt[i].address}}, {{currentCustomersToTakeReceipt[i].zipCode}} <br />
+                        <br />
+                        Passport : {{currentCustomersToTakeReceipt[i].passport}} <br />
+                        Email : {{currentCustomersToTakeReceipt[i].email}} <br />
+                        Phone : {{currentCustomersToTakeReceipt[i].contactPhone}} <br />
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+
+
+              <tr class="heading">
+                <td>Services</td>
+                <td>Price</td>
+              </tr>
+
+              <ng-container *ngFor="let itemPricing of customerPricing">
+                <tr *ngIf="itemPricing.customerId==customer.customerId" class="item">
+                  <td>{{itemPricing.description}} ({{itemPricing.date}}) </td>
+
+                  <td>${{itemPricing.price}}</td>
+                </tr>
+              </ng-container>
+              <tr *ngIf="totalPersonal[i]==0">
+                <td>Νo services were purchased.</td>
+              </tr>
+
+              <tr class="total">
+                <td></td>
+
+                <td>Total: ${{totalPersonal[i]}}</td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="modal-body">
+          <button (click)="generateReceipt(i)" class="btn btn-success"><i class="fa-solid fa-calculator"></i>  Generate Receipt ({{i+1}})</button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="currentTourOperator=='SELF' && this.customerToPayExistsOnCustomersOfResetReservation">
+        <div class="modal-header">
+          <div class="invoice-box" id="{{ 'htmlData' + 'nightsReceipt' }}">
+            <table cellpadding="0" cellspacing="0">
+              <tr class="top">
+                <td colspan="2">
+                  <table>
+                    <tr>
+                      <td class="title">
+                        <img src="assets/logo.png" style="width: 100%; max-width: 300px" />
+                      </td>
+
+                      <td>
+                        Receipt #: {{hotelSpecificsObj.receiptNumber+currentCustomersToTakeReceiptCount+1}} <br />
+                        Created: {{currentDateString}}<br />
+                        Due: {{currentDateString}}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <tr class="information">
+                <td colspan="2">
+                  <table>
+                    <tr>
+                      <td>
+                        <strong>
+                          Country: {{hotelSpecificsObj.country}}<br />
+                          City: {{hotelSpecificsObj.city}}<br />
+                          Address: {{hotelSpecificsObj.address}}, {{hotelSpecificsObj.postalCode}} <br />
+                        </strong>
+                        <hr />
+                        <strong>Check In Date: {{currentReservation.checkInDate}}</strong> <br />
+                        <strong>Check Out Date: {{currentReservation.checkOutDate}} </strong>
+                      </td>
+
+                      <td>
+                        Full Name : {{customerMustPay.firstName}} {{customerMustPay.lastName}}<br />
+                        Address : {{customerMustPay.country}}, {{customerMustPay.city}} <br />
+                        {{customerMustPay.address}}, {{customerMustPay.zipCode}} <br />
+                        <br />
+                        Passport : {{customerMustPay.passport}} <br />
+                        Email : {{customerMustPay.email}} <br />
+                        Phone : {{customerMustPay.contactPhone}} <br />
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+
+              <tr class="heading">
+                <td>
+                </td>
+                <td>Price</td>
+              </tr>
+
+
+              <tr *ngFor="let element of visualizationOfReceipt" class="item">
+                <td>
+                  {{element.numberOfRooms}} {{element.typeOfRooms}} {{element.terms}} ,
+                  {{element.initialPrice}}$ (Per Room Per Night).
+                </td>
+
+                <td>${{element.totalPrice}}</td>
+              </tr>
+
+              <tr class="total">
+                <td></td>
+
+                <td>Total: ${{overalNightPricing}}</td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="modal-body">
+          <button (click)="generateReceipt('nightsReceipt')" class="btn btn-success"><i class="fa-solid fa-calculator"></i>  Generate Receipt ({{currentCustomersToTakeReceiptCount+1}})</button>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="checkOutSelf" tabindex="-1" role="dialog" aria-labelledby="checkOutSelfLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLabel">Self Check Out</h3>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!--Modal Body Start-->
+
+
+      <div class="modal-body">
+        <form [formGroup]="formValue">
+
+          <div class="form-group">
+            <span class="form-label">Total Price</span>
+            <input formControlName="totalPrice" class="form-control" type="number">
+          </div>
+        </form>
+      </div>
+      <!--Modal Body End-->
+      <div class="modal-footer">
+        <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+        <button (click)="paymentButtonClicked()" type="button" class="btn btn-success"> Payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+

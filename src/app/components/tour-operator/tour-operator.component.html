@@ -1,0 +1,101 @@
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71);">
+    <h1 class="pl-1" style="color:white">Tour Operator Functions</h1>
+      <button (click)="clickAddOperator()" type="button" data-bs-toggle="modal" data-bs-target="#tourOperatorModal"  class="btn btn-success mr-1"> <i class="fa-solid fa-plus"></i> Add Tour Operator</button>
+</nav>
+
+<!--<table class="table mt-3">-->
+<div class="container-fluid">
+  <table class="table mt-3" tabindex="0">
+    <thead>
+      <tr>
+        <th scope="col">#Tour Operator Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Contact Phone</th>
+        <th scope="col">Email</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let operator of tourOperators">
+        <td>{{operator.id}}</td>
+        <td>{{operator.name}}</td>
+        <td>{{operator.contactPhone}}</td>
+        <td>{{operator.email}}</td>
+
+        <td>
+          <button (click)="editOperator(operator)" type="button" data-bs-toggle="modal" data-bs-target="#tourOperatorModal" class="btn btn-info"><i class="fa-solid fa-pen"></i> Edit </button>
+          <button (click)="onDelete(operator.id)" class="btn btn-danger mx-1"><i class="fa-solid fa-trash-can"></i>  Delete</button>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="tourOperatorModal" tabindex="-1" role="dialog" aria-labelledby="tourOperatorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLabel">Tour Operator Details</h3>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!--Modal Body Start-->
+      <div class="modal-body">
+        <form [formGroup]="formValue">
+          <div class="form-group">
+            <label for="exampleInputType">Tour Operator Name</label>
+            <input formControlName="name" type="text" class="form-control" id="exampleInputType" aria-describedby="TypeHelp" placeholder="Tour Operator Name">
+            <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="name?.errors?.['required']">
+                Name is required
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="form-group">
+            <label for="exampleInputType">Contact Phone</label>
+            <input formControlName="contactPhone" class="form-control" type="text" placeholder="Enter Customer's Contact Phone">
+            <div *ngIf="contactPhone.invalid && (contactPhone.dirty || contactPhone.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="contactPhone?.errors?.['required']">
+                Contact Phone is required
+              </div>
+              <div *ngIf="contactPhone?.errors?.['maxlength']">
+                Contact Phone must be up to 10 characters long
+              </div>
+              <div *ngIf="contactPhone?.errors?.['minlength']">
+                Contact Phone must be at least 10 digits long
+              </div>
+              <div *ngIf="contactPhone?.errors?.['pattern']">
+                Wrong Contact Phone format
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputType">Email</label>
+            <input formControlName="email" class="form-control" type="text" placeholder="Enter Customer's Email">
+            <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger mt-1">
+              <div *ngIf="email?.errors?.['required']">
+                Email is required
+              </div>
+              <div *ngIf="email?.errors?.['pattern']">
+                Wrong Email format
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!--Modal Body End-->
+      <div class="modal-footer">
+        <button type="button" id="cancel" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"> </i> Close</button>
+        <button (click)="updateTourOperator()" *ngIf="showUpdate" type="button" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Update</button>
+        <button (click)="postTourOperatorClicked()" *ngIf="showAdd" type="button" class="btn btn-primary"><i class="fa-solid fa-wrench"></i> Add</button>
+      </div>
+    </div>
+  </div>
+</div>

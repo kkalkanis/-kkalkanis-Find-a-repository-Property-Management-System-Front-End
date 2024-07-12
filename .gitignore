@@ -1,0 +1,31 @@
+# Compiled output
+/dist
+/tmp
+/out-tsc
+
+# Dependencies
+/node_modules
+
+# IDE and Editor settings
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/
+.vs/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Angular specific
+.angular/cache
+.angular/cli
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

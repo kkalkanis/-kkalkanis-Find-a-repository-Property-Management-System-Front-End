@@ -1,0 +1,48 @@
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <div class="container-fluid">
+    <h1 style="color:white">Room Type Availability Board</h1>
+    <div class="d-flex">
+    </div>
+  </div>
+
+</nav>
+
+<table class="table table-responsive table-bordered mt-5 mx-5 px-0 container"tabindex="0">
+  <thead>
+    <tr>
+      <th class="bg-light" style="text-align:center;vertical-align:middle" rowspan="2" scope="col">Types</th>
+      <th *ngIf="coupleOfMonth[1]" style="text-align:center" colspan="30">{{coupleOfMonth[0]}} {{coupleOfYears[0]}} - {{coupleOfMonth[1]}} {{coupleOfYears[1]}} </th>
+      <th *ngIf="coupleOfMonth[1]==undefined" style="text-align:center" colspan="30">{{coupleOfMonth[0]}} {{coupleOfYears[0]}}  </th>
+    </tr>
+    <tr>
+      <td *ngFor="let day of monthsAndDays">{{day}}</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let tempType of types">
+      <th class="px-5 py-3" scope="row">{{tempType.type}} </th>
+      <ng-container *ngFor="let avail of typeAvailability">
+        <ng-container *ngIf="tempType.type==avail.type">
+          <td style="padding: 0; text-align: center; vertical-align:middle" class="bg-light">{{avail.available}}</td>
+        </ng-container>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>
+<h4 class="container text-danger">*The number in table fields refers to the number of available rooms per date.</h4>
+<!-- begin footer -->
+<div class="container">
+  <div style="padding-left: 30%">
+
+    <ngb-pagination [(page)]="pageNumber"
+                    [pageSize]="sizeNumber"
+                    [collectionSize]="theTotalElements"
+                    [maxSize]="5"
+                    [boundaryLinks]="true"
+                    (pageChange)="getTypeAvailability()">
+
+    </ngb-pagination>
+
+  </div>
+
+</div>

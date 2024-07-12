@@ -1,0 +1,14 @@
+@media (min-width:200px) and ( max-width: 600px) {
+  .header {
+    /* force devises with a smaller width to observe this style */
+    min-width: 600px;
+    background-color: rgb(71, 71, 71);
+  }
+}
+
+#divChart{
+    display:block;
+    height:39rem;
+    width:95rem;
+
+}

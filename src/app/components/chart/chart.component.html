@@ -1,0 +1,32 @@
+<nav class="header my-0 navbar  navbar-light" style="background-color: rgb(71, 71, 71) ">
+  <h1 class="pl-1" style="color:white">View Statistics</h1>
+</nav>
+
+<div class="container-fluid" style="background-color: rgb(71, 71, 71) ">
+  <div class="row">
+    <div class="col-4"></div>
+    <div class="col-3">
+      <div class="d-flex flex-row align-items-center mb-4">
+        <div class="form-outline flex-fill mb-0">
+          <label style="color: white; font-size: 1.2rem;" class="form-label" for="form3Example4c">Choose Year</label><br />
+          <select [ngModel]="startYear" (change)="yearHandler($event)" style="width: 6.8rem; height: 2rem;  outline: none; ">
+            <option *ngFor="let year of years">{{year}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-outline flex-fill mb-0">
+        <label style="color:white;font-size:1.2rem;" class="form-label" for="form3Example4c">Choose Statistic</label><br />
+        <select [ngModel]="selectedMetric" (change)="metricHandler($event)" style="width: 10rem; height: 2rem;  outline: none; ">
+          <option>Reveniew Per Month</option>
+          <option>Visitors Per Month</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="divChart" class="container">
+  <canvas id="myChart"></canvas>
+</div>
